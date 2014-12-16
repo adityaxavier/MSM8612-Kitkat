@@ -73,6 +73,15 @@ config INPUT_BMA150
 	  To compile this driver as a module, choose M here: the
 	  module will be called bma150.
 
+config INPUT_HBTP_INPUT
+	tristate "HBTP input driver support"
+	help
+	  Say Y to enable HBTP input driver.
+
+	  To compile this driver as a module, choose M here: the
+	  module will be called hbtp_input.
+
+
 config INPUT_PCSPKR
 	tristate "PC Speaker support"
 	depends on PCSPKR_PLATFORM
@@ -714,4 +723,60 @@ config SENSORS_CAPELLA_CM36283
 
 	  To compile this driver as a module, choose M here: the
 	  module will be called CM36283.
+	  
+	
+
+config SENSORS_CAPELLA_HM8001
+	tristate "HM8001 proximity and light sensor"
+	depends on I2C
+	default n
+	help
+	  Say Y here to enable the HM8001 Proximity
+	  Sensor with Ambient Light Sensor.
+
+	  To compile this driver as a module, choose M here: the
+	  module will be called HM8001.
+	  
+config SENSORS_AKM8963C
+	tristate "AKM8963C campass"
+	depends on I2C
+	default n
+	help
+	  Say Y here to enable the akm8963c campass Sensor. 
+
+	  To compile this driver as a module, choose M here: the
+	  module will be called amk8963c.
+	  
+config SENSORS_TMD277X
+	tristate "TMD277x proximity and light sensor"
+	depends on I2C
+	default n
+	help
+	  Say Y here to enable the tmd277x Sensor. 
+
+	  To compile this driver as a module, choose M here: the
+	  module will be called tmd277x.
+	  
+config SENSORS_STK31XX
+	tristate "STK31XX device driver"
+	depends on I2C
+	default n
+	help
+	  Say Y here you want to enable for the sitronix stk31xx
+	  light and proximity sensors driver.
+
+	  To compile this driver as a module, choose M here: the
+	  module will be called stk31xx.
+	  
+config SENSORS_APDS9900
+	tristate "APDS9900 device driver"
+	depends on I2C
+	default n
+	help
+	  Say Y here you want to enable for the sitronix apds9900
+	  light and proximity sensors driver.
+
+	  To compile this driver as a module, choose M here: the
+	  module will be called apds9900.	  
+	  
 endif
