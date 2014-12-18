@@ -1815,7 +1815,6 @@ static void bke_switch(
 		M_BKE_EN_RMSK;
 	if (val == reg_val)
 		return;
-
 	if (!req && mode == BIMC_QOS_MODE_FIXED)
 		set_qos_mode(baddr, mas_index, 1, 1, 1);
 

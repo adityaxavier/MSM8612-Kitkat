@@ -82,6 +82,25 @@ static int32_t msm_led_trigger_config(struct msm_led_flash_ctrl_t *fctrl,
 			led_trigger_event(fctrl->torch_trigger,
 				curr_l);
 		}
+#if defined(CONFIG_GOSO_PRODUCT) ///@Hxin add it for LED LOW without torch trigger start
+		else
+		{
+			for (i = 0; i < fctrl->num_sources; i++)
+				if (fctrl->flash_trigger[i]) {
+					max_curr_l = fctrl->flash_max_current[i];
+					if (cfg->torch_current > 0 &&
+							cfg->torch_current < max_curr_l) {
+						curr_l = cfg->torch_current / 2;
+					} else {
+						curr_l = fctrl->flash_op_current[i] / 2;
+						pr_err("LED current clamped to %d\n",
+							curr_l);
+					}
+					led_trigger_event(fctrl->flash_trigger[i],
+						curr_l);
+				}
+		}
+#endif   ///@Hxin add it for LED LOW without torch trigger start
 		break;
 
 	case MSM_CAMERA_LED_HIGH:

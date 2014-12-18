@@ -10,10 +10,7 @@
  * GNU General Public License for more details.
  */
 
-/include/ "dsi-panel-truly-wvga-video.dtsi"
-/include/ "dsi-panel-truly-wvga-cmd.dtsi"
-/include/ "dsi-panel-nt35590-720p-video.dtsi"
-/include/ "dsi-panel-otm8018b-fwvga-video.dtsi"
-/include/ "dsi-panel-hx8379a-wvga-video.dtsi"
-/include/ "dsi-panel-hx8389b-qhd-video.dtsi"
-/include/ "dsi-panel-otm9605a-hsd-video.dtsi"
+/include/ "dsi-panel-nt35590-holitech-720p-video.dtsi"
+/include/ "dsi-panel-otm9608a-qhd-video.dtsi"
+/include/ "dsi-panel-ili9806c-wvga-video.dtsi"
+/include/ "dsi-panel-otm9605a-qhd-video.dtsi"

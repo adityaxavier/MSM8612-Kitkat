@@ -24,6 +24,20 @@ static struct msm_sensor_power_setting ov9724_power_setting[] = {
 		.config_val = 0,
 		.delay = 0,
 	},
+#ifdef CONFIG_GOSO_PRODUCT
+	{
+		.seq_type = SENSOR_GPIO,
+		.seq_val = SENSOR_GPIO_VDIG,
+		.config_val = GPIO_OUT_LOW,
+		.delay = 5,
+	},
+	{
+		.seq_type = SENSOR_GPIO,
+		.seq_val = SENSOR_GPIO_VDIG,
+		.config_val = GPIO_OUT_HIGH,
+		.delay = 5,
+	},
+#endif
 	{
 		.seq_type = SENSOR_VREG,
 		.seq_val = CAM_VIO,

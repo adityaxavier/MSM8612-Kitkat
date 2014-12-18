@@ -170,6 +170,7 @@ static struct gpiomux_setting gpio_keys_suspend = {
 	.pull = GPIOMUX_PULL_NONE,
 };
 
+#if 0 //@Hxin disable it
 /* define gpio used as interrupt input */
 static struct gpiomux_setting gpio_int_act_cfg = {
 	.func = GPIOMUX_FUNC_GPIO,
@@ -194,6 +195,7 @@ static struct msm_gpiomux_config msm_gpio_int_configs[] __initdata = {
 		},
 	},
 };
+#endif
 
 static struct msm_gpiomux_config msm_lcd_configs[] __initdata = {
 	{
@@ -270,6 +272,7 @@ static struct msm_gpiomux_config msm_blsp_configs[] __initdata = {
 		},
 	},
 };
+#ifdef CONFIG_NFC
 
 static struct gpiomux_setting gpio_i2c_nfc_pvt_config = {
 		.func = GPIOMUX_FUNC_5, /*active 1*/ /* 0 */
@@ -293,7 +296,7 @@ static struct msm_gpiomux_config msm_nfc_configs[] __initdata = {
 		},
 	},
 };
-
+#endif
 
 static struct msm_gpiomux_config msm_atmel_configs[] __initdata = {
 	{
@@ -474,6 +477,12 @@ static struct gpiomux_setting gpio_suspend_config[] = {
 		.pull = GPIOMUX_PULL_NONE,
 		.dir = GPIOMUX_OUT_LOW,
 	},
+	{ ///Hxin add it
+		.func = GPIOMUX_FUNC_GPIO,  /* O-LOW */
+		.drv = GPIOMUX_DRV_2MA,
+		.pull = GPIOMUX_PULL_NONE,
+		.dir = GPIOMUX_OUT_HIGH,
+	},
 };
 
 static struct gpiomux_setting cam_settings[] = {
@@ -574,6 +583,7 @@ static struct msm_gpiomux_config msm_sensor_configs[] __initdata = {
 			[GPIOMUX_SUSPENDED] = &gpio_suspend_config[1],
 		},
 	},
+#if 0 //@Hxin disable it for lcd ldo control
 	{
 		.gpio = 8, /* CAM1_STANDBY_N */
 		.settings = {
@@ -581,6 +591,7 @@ static struct msm_gpiomux_config msm_sensor_configs[] __initdata = {
 			[GPIOMUX_SUSPENDED] = &gpio_suspend_config[1],
 		},
 	},
+#endif
 	{
 		.gpio = 15, /* CAM1_RST_N */
 		.settings = {
@@ -602,6 +613,15 @@ static struct msm_gpiomux_config msm_sensor_configs[] __initdata = {
 			[GPIOMUX_SUSPENDED] = &gpio_suspend_config[1],
 		},
 	},
+#if defined(CONFIG_PRODUCT_CALD01) || defined(CONFIG_PRODUCT_UALD01) ///@Hxin add it to keep AVDD on when suspend or leak current
+	{
+		.gpio = 84, /* AVDD LDO EN */
+		.settings = {
+			[GPIOMUX_ACTIVE]    = &cam_settings[3],
+			[GPIOMUX_SUSPENDED] = &gpio_suspend_config[2],
+		},
+	},
+#endif
 };
 
 static struct msm_gpiomux_config msm_keypad_configs[] __initdata = {
@@ -672,6 +692,13 @@ static struct gpiomux_setting interrupt_gpio_suspend_pulldown = {
 
 static struct msm_gpiomux_config msm_interrupt_configs[] __initdata = {
 	{
+		.gpio = 75,	/* NFC_CLK_REQ_IRQ*/
+		.settings = {
+			[GPIOMUX_ACTIVE]    = &interrupt_gpio_active,
+			[GPIOMUX_SUSPENDED] = &interrupt_gpio_suspend_pullup,
+		},
+	},
+	{
 		.gpio = 77,	/* NFC_IRQ */
 		.settings = {
 			[GPIOMUX_ACTIVE]    = &interrupt_gpio_active,
@@ -723,6 +750,61 @@ static struct msm_gpiomux_config msm_cdc_dmic_configs[] __initdata = {
 	},
 };
 
+static struct gpiomux_setting ice40_spi_cs_act_config = {
+	.func = GPIOMUX_FUNC_1,
+	.drv = GPIOMUX_DRV_6MA,
+	.pull = GPIOMUX_PULL_NONE,
+};
+
+static struct gpiomux_setting ice40_spi_cs_susp_config = {
+	.func = GPIOMUX_FUNC_GPIO,
+	.drv = GPIOMUX_DRV_6MA,
+	.pull = GPIOMUX_PULL_UP,
+};
+
+static struct gpiomux_setting ice40_act_config = {
+	.func = GPIOMUX_FUNC_GPIO,
+	.drv = GPIOMUX_DRV_8MA,
+	.pull = GPIOMUX_PULL_NONE,
+};
+
+static struct gpiomux_setting ice40_susp_config = {
+	.func = GPIOMUX_FUNC_GPIO,
+	.drv = GPIOMUX_DRV_2MA,
+	.pull = GPIOMUX_PULL_NONE,
+};
+
+static struct msm_gpiomux_config ice40_spi_usb_configs[] __initdata = {
+	{
+		.gpio = 85,
+		.settings = {
+			[GPIOMUX_ACTIVE] = &ice40_spi_cs_act_config,
+			[GPIOMUX_SUSPENDED] = &ice40_spi_cs_susp_config,
+		},
+	},
+	{
+		.gpio = 94,
+		.settings = {
+			[GPIOMUX_ACTIVE] = &ice40_act_config,
+			[GPIOMUX_SUSPENDED] = &ice40_susp_config,
+		},
+	},
+	{
+		.gpio = 95,
+		.settings = {
+			[GPIOMUX_ACTIVE] = &ice40_act_config,
+			[GPIOMUX_SUSPENDED] = &ice40_susp_config,
+		},
+	},
+	{
+		.gpio = 96,
+		.settings = {
+			[GPIOMUX_ACTIVE] = &ice40_act_config,
+			[GPIOMUX_SUSPENDED] = &ice40_susp_config,
+		},
+	},
+};
+
 void __init msm8610_init_gpiomux(void)
 {
 	int rc;
@@ -749,13 +831,15 @@ void __init msm8610_init_gpiomux(void)
 				ARRAY_SIZE(msm_keypad_configs));
 	msm_gpiomux_install(sd_card_det, ARRAY_SIZE(sd_card_det));
 	msm_gpiomux_install(msm_sensor_configs, ARRAY_SIZE(msm_sensor_configs));
-	msm_gpiomux_install(msm_gpio_int_configs,
-			ARRAY_SIZE(msm_gpio_int_configs));
+	//msm_gpiomux_install(msm_gpio_int_configs, //@Hxin disable it
+	//		ARRAY_SIZE(msm_gpio_int_configs));
 	if (of_board_is_qrd()) {
 		msm_gpiomux_install(msm_interrupt_configs,
 			ARRAY_SIZE(msm_interrupt_configs));
+    #ifdef CONFIG_NFC
 		msm_gpiomux_install(msm_nfc_configs,
 			ARRAY_SIZE(msm_nfc_configs));
+    #endif
 	} else {
 		msm_gpiomux_install(msm_non_qrd_configs,
 			ARRAY_SIZE(msm_non_qrd_configs));
@@ -763,6 +847,10 @@ void __init msm8610_init_gpiomux(void)
 	if (of_board_is_cdp())
 		msm_gpiomux_install(msm_cdc_dmic_configs,
 			ARRAY_SIZE(msm_cdc_dmic_configs));
+
+	if (of_board_is_cdp())
+		msm_gpiomux_install(ice40_spi_usb_configs,
+			ARRAY_SIZE(ice40_spi_usb_configs));
 }
 
 static void wcnss_switch_to_gpio(void)

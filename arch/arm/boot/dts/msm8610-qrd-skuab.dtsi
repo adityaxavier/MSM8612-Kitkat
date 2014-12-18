@@ -36,7 +36,7 @@
             "AMIC2", "MIC BIAS Internal2";
 
         qcom,ext-spk-amp-gpio = <&msmgpio 92 0x0>;
-	qcom,ext-spk-amp-gpio-en2 = <&msmgpio 93 0x0>;
+        qcom,ext-spk-amp-gpio-en2 = <&msmgpio 93 0x0>;
     };
     i2c@f9923000{
 		focaltech@38{
@@ -64,32 +64,21 @@
 			interrupt-gpios = <&msmgpio 1 0x00>;
 			vdd-supply = <&pm8110_l19>;
 			vcc-i2c-supply = <&pm8110_l14>;
-			goodix,panel-coords = <0 0 540 980>;
-			goodix,display-coords = <0 0 540 960>;
-			goodix,button-map= <139 172 158>;
-			goodix,product-id = "915";
-			goodix,enable-power-off;
-			goodix,cfg-data0 = [
-				46 1C 02 C0 03 0A 05 11 01 08
-				14 3B 46 32 03 05 00 00 00 00
-				00 00 00 00 00 00 00 8A 09 0B
-				39 00 99 0A 00 00 02 83 03 1D
-				00 08 00 00 00 00 00 00 00 00
-				00 1D 73 94 C5 02 07 00 00 04
-				78 21 00 5C 2C 00 48 3A 00 3A
-				4C 00 2F 65 00 30 10 30 50 00
-				56 45 35 FF FF 17 00 00 00 00
-				00 01 1C 15 0C 14 5F 03 02 00
-				00 00 00 00 00 00 00 00 00 00
-				00 00 16 14 12 10 0E 0C 0A 08
-				06 04 02 FF FF FF 00 00 00 00
-				00 00 00 00 00 00 00 00 00 00
-				00 00 22 21 20 1F 1E 1D 1C 18
-				16 12 10 0F 0C 0A 08 06 04 02
-				00 FF FF FF FF FF FF FF 00 00
-				00 FF FF FF FF FF FF FF FF FF
-				F8 FF FF FF E4 01];
+			goodix,button-map= <139 102 158>;
+			//goodix,enable-power-off;//the tp power is keeping,did't need power off
+			
 		};
+
+		msg@26{
+		compatible = "msg,msg2133";
+		reg = <0x26>;
+		interrupt-parent = <&msmgpio>;
+		interrupts = <1 0x2008>;
+		reset = <&msmgpio 0 0x00>;
+		irq = <&msmgpio 1 0x00>;
+		vdd-supply = <&pm8110_l19>;
+		vcc_i2c-supply= <&pm8110_l14>;
+		};		
 	};
 	gen-vkeys {
 		compatible = "qcom,gen-vkeys";
@@ -100,20 +89,6 @@
 		qcom,panel-maxy = <946>;
 		qcom,key-codes = <139 102 158>;
 		qcom,y-offset = <0>;
-	};
-
-	i2c@f9924000 { /* BLSP-1 QUP-2 */
-		nfc-nci@e {
-			compatible = "qcom,nfc-nci";
-			reg = <0x0e>;
-			qcom,irq-gpio = <&msmgpio 77 0x00>;
-			qcom,dis-gpio = <&msmgpio 93 0x00>;
-			qcom,clk-en-gpio = <&msmgpio 78 0x00>;
-			qcom,clk-src = "GPCLK2";
-			interrupt-parent = <&msmgpio>;
-			interrupts = <77 0>;
-			qcom,clk-gpio = <&msmgpio 75 0x00>;
-		};
 	};
 
     i2c@f9925000 {
@@ -127,30 +102,32 @@
 			fsl,irq-gpio = <&msmgpio 81 0x00>;
 			fsl,sensors-position = <5>;
 		};
+
+	
+		hm@3b {
+			compatible = "hm,hm8001";
+			reg = <0x3b>;
+			interrupt-parent = <&msmgpio>;
+			interrupts = <80 0x2>;
+			vdd-supply = <&pm8110_l19>;
+			vio-supply = <&pm8110_l14>;
+			hm,irq-gpio = <&msmgpio 80 0x02>;
+			hm,use-fir;
+		};
+
+		akm@0d {
+			compatible = "akm,akm8963c";
+			reg = <0x0d>;
+			interrupt-parent = <&msmgpio>;
+			interrupts = <83 0x2>;
+			vdd-supply = <&pm8110_l19>;
+			vio-supply = <&pm8110_l14>;
+			akm,gpio_DRDY = <&msmgpio 83 0x02>;
+			akm,layout = <5>;
+			
+		};
 		
-                hm@3b {
-                        compatible = "hm,hm8001";
-                        reg = <0x3b>;
-                        interrupt-parent = <&msmgpio>;
-                        interrupts = <80 0x2>;
-                        vdd-supply = <&pm8110_l19>;
-                        vio-supply = <&pm8110_l14>;
-                        hm,irq-gpio = <&msmgpio 80 0x02>;
-                        hm,use-fir;
-                };
-
-                akm@0d {
-                        compatible = "akm,akm8963c";
-                        reg = <0x0d>;
-                        interrupt-parent = <&msmgpio>;
-                        interrupts = <83 0x2>;
-                        vdd-supply = <&pm8110_l19>;
-                        vio-supply = <&pm8110_l14>;
-                        akm,gpio_DRDY = <&msmgpio 83 0x02>;
-                        akm,layout = <5>;
-
-                };
-
+		
 		stk@48 {
 			compatible = "stk,stk3x1x";
 			reg = <0x48>;
@@ -169,18 +146,30 @@
 			stk,ps-thdl = <100>;
 			stk,use-fir;
 		};
-		
-		tmd@39 {
-                        compatible = "tmd,tmd2771x";
-                        reg = <0x39>;
-                        interrupt-parent = <&msmgpio>;
-                        interrupts = <80 0x2>;
-                        vdd-supply = <&pm8110_l19>;
-                        vio-supply = <&pm8110_l14>;
-                        tmd,irq-gpio = <&msmgpio 80 0x02>;
-                        tmd,use-fir;
-                };
-		
+
+	tmd@39 {
+			compatible = "tmd,tmd2771x";
+			reg = <0x39>;
+			interrupt-parent = <&msmgpio>;
+			interrupts = <80 0x2>;
+			vdd-supply = <&pm8110_l19>;
+			vio-supply = <&pm8110_l14>;
+			tmd,irq-gpio = <&msmgpio 80 0x02>;
+			tmd,use-fir;
+		};
+
+
+	apds@40 {
+		compatible = "apds,apds9900";
+		reg = <0x40>;
+		interrupt-parent = <&msmgpio>;
+		interrupts = <80 0x2>;
+		vdd-supply = <&pm8110_l19>;
+		vio-supply = <&pm8110_l14>;
+		apds,irq-gpio = <&msmgpio 80 0x02>;
+		apds,use-fir;
+	};
+	
 	};
 
 	usb@f9a55000 {
@@ -193,7 +182,7 @@
 	qrd_batterydata: qcom,battery-data {
 		qcom,rpull-up-kohm = <100>;
 		qcom,vref-batt-therm = <1800000>;
-	
+
 		/include/ "batterydata-weike-4v35-2200mah.dtsi"
 	};
 };
@@ -210,12 +199,24 @@
 &mdss_mdp {
 	qcom,mdss-pref-prim-intf = "dsi";
 };
-
+	
 &mdss_dsi0 {
-        qcom,dsi-pref-prim-pan = <&dsi_otm9605a_hsd_vid>;
+	qcom,dsi-pref-prim-pan = <&dsi_otm9605a_qhd_vid>;
 };
 
-&dsi_otm9605a_hsd_vid {
-        qcom,cont-splash-enabled;
+&dsi_otm9605a_qhd_vid {
+	qcom,cont-splash-enabled;
 };
 
+//GOSO modify: sd card hot plug event report fail for sdhc_2 config conflict
+/*
+&sdhc_2 {
+        qcom,nonremovable;
+
+        interrupts = <0 1>;
+        interrupt-map = <0 &intc 0 125 0
+                        1 &intc 0 221 0>;
+        interrupt-names = "hc_irq", "pwr_irq";
+        /delete-property/ cd-gpios;
+}; */
+// Modify End

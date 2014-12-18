@@ -1,3 +1,11 @@
+## GOSO Product add start
+PERL		= perl
+CONFIG_DIR :=$(OUT)/obj/KERNEL_OBJ/.config
+GOSO_ARCH_NAMES ?= $(shell $(PERL) -e 'while (<>) {$$a = $$1 if /CONFIG_ARCH_MSM([0-9]+)=y/; $$r = $$a} print lc($$r)' $(CONFIG_DIR))
+GOSO_PRJ_NAMES ?= $(shell $(PERL) -e 'while (<>) {$$a = $$1 if /CONFIG_PRODUCT_([a-zA-Z0-9](\w+))=y/; $$r = $$a} print lc($$r)' $(CONFIG_DIR))
+GOSO_DTS_NAME = $(shell echo msm$(GOSO_ARCH_NAMES)-goso-$(GOSO_PRJ_NAMES).dtb)
+## add end
+
 # MSM7x01A
    zreladdr-$(CONFIG_ARCH_MSM7X01A)	:= 0x10008000
 params_phys-$(CONFIG_ARCH_MSM7X01A)	:= 0x10000100
@@ -69,6 +77,7 @@ endif
         dtb-$(CONFIG_ARCH_MSM8974)	+= msm8974-v2.2-mtp.dtb
         dtb-$(CONFIG_ARCH_MSM8974)	+= msm8974pro-ab-pm8941-cdp.dtb
         dtb-$(CONFIG_ARCH_MSM8974)	+= msm8974pro-ab-pm8941-fluid.dtb
+        dtb-$(CONFIG_ARCH_MSM8974)	+= msm8974pro-ab-pm8941-fluid-hbtp.dtb
         dtb-$(CONFIG_ARCH_MSM8974)	+= msm8974pro-ab-pm8941-liquid.dtb
         dtb-$(CONFIG_ARCH_MSM8974)	+= msm8974pro-ab-pm8941-mtp.dtb
         dtb-$(CONFIG_ARCH_MSM8974)	+= msm8974pro-ac-pm8941-cdp.dtb
@@ -98,6 +107,15 @@ endif
 	dtb-$(CONFIG_ARCH_MSM9625)      += msm9625-v2.1-cdp.dtb
 
 # MSM8226
+ifdef CONFIG_GOSO_PRODUCT
+   zreladdr-$(CONFIG_ARCH_MSM8226)     := 0x00008000
+	ifndef CONFIG_PRODUCT_NONE
+	dtb-$(CONFIG_PRODUCT_CALC00)     += msm8226-goso-calc00.dtb
+	dtb-$(CONFIG_PRODUCT_CALC02)     += msm8226-goso-calc02.dtb
+	else
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8226-v2-qrd-dvt.dtb
+	endif
+else
    zreladdr-$(CONFIG_ARCH_MSM8226)	:= 0x00008000
 	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8226-sim.dtb
 	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8226-fluid.dtb
@@ -111,13 +129,22 @@ endif
 	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8226-v2-1080p-mtp.dtb
 	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8226-v2-qrd-evt.dtb
 	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8226-v2-qrd-dvt.dtb
-	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-720p-cdp.dtb
-	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-1080p-cdp.dtb
-	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-720p-mtp.dtb
-	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-1080p-mtp.dtb
-	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-qrd.dtb
-	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-qrd-skug.dtb
-	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-qrd-skug-pvt.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-v1-720p-cdp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-v1-1080p-cdp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-v1-720p-mtp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-v1-1080p-mtp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-v1-qrd.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-v1-qrd-skug.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-v1-qrd-skug-pvt.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-v2-720p-cdp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-v2-1080p-cdp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-v2-1080p-ext-buck-cdp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-v2-720p-mtp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-v2-1080p-mtp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-v2-1080p-ext-buck-mtp.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-v2-qrd.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-v2-qrd-skug.dtb
+	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8926-v2-qrd-skug-pvt.dtb
 	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8226-v1-qrd-skuf.dtb
 	dtb-$(CONFIG_ARCH_MSM8226)	+= msm8226-v2-qrd-skuf.dtb
 	dtb-$(CONFIG_ARCH_MSM8226)	+= apq8026-v1-xpm.dtb
@@ -128,6 +155,7 @@ endif
 	dtb-$(CONFIG_ARCH_MSM8226)	+= apq8026-v2-1080p-cdp.dtb
 	dtb-$(CONFIG_ARCH_MSM8226)	+= apq8026-v2-720p-mtp.dtb
 	dtb-$(CONFIG_ARCH_MSM8226)	+= apq8026-v2-1080p-mtp.dtb
+endif
 
 # FSM9XXX
    zreladdr-$(CONFIG_ARCH_FSM9XXX)	:= 0x10008000
@@ -143,6 +171,7 @@ initrd_phys-$(CONFIG_ARCH_FSM9XXX)	:= 0x12000000
    zreladdr-$(CONFIG_ARCH_MPQ8092)	:= 0x00008000
 
 # MSM8610
+##modify start: auto make goso project dtb,format:chipname-goso-projectname
    zreladdr-$(CONFIG_ARCH_MSM8610)	:= 0x00008000
         #dtb-$(CONFIG_ARCH_MSM8610)	+= msm8610-v1-cdp.dtb
         #dtb-$(CONFIG_ARCH_MSM8610)	+= msm8610-v2-cdp.dtb
@@ -153,7 +182,8 @@ initrd_phys-$(CONFIG_ARCH_FSM9XXX)	:= 0x12000000
         #dtb-$(CONFIG_ARCH_MSM8610)	+= msm8610-v1-qrd-skuaa.dtb
         #dtb-$(CONFIG_ARCH_MSM8610)	+= msm8610-v1-qrd-skuab.dtb
         #dtb-$(CONFIG_ARCH_MSM8610)	+= msm8610-v2-qrd-skuaa.dtb
-        dtb-$(CONFIG_ARCH_MSM8610)	+= msm8610-v2-qrd-skuab.dtb
+        #dtb-$(CONFIG_ARCH_MSM8610)	+= msm8610-v2-qrd-skuab.dtb
+	dtb-$(CONFIG_ARCH_MSM8610)     += msm8610-goso-cald01.dtb
 
 # MSMSAMARIUM
    zreladdr-$(CONFIG_ARCH_MSMSAMARIUM)	:= 0x00008000
